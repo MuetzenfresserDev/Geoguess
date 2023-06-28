@@ -1,0 +1,152 @@
+<!-- STRG + Y STARTET DIE AUSWERTUNG WENN EIN PUNKT GEWÄHLT WURDE -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <canvas id="canvas" width="600" height="600" style="margin: 0; padding: 0;"></canvas>
+    <img id="klickPosition" src="896145725287714888.png">
+    <img id="goalPosition" src="Pngitem_751158.png">
+    <div id="lsg-box">
+        <div id="abstand"></div>
+    </div>
+
+</body>
+<script>
+    let img = document.getElementById("canvas")
+    img.addEventListener("click", clickHandler)
+
+    var canv = document.getElementById("canvas")
+    canv.style.backgroundImage = "url(" + "Landkarte_Khorinis.jpg" + ")"
+
+    let goalX = 309;
+    let goalY = 192;
+
+    let x = 0;
+    let y = 0;
+
+    let abstand = 0;
+    let abstandDiv = document.getElementById("abstand")
+    abstandDiv.textContent = 0 + " Pixel";
+
+    document.addEventListener("keydown", function(event) {
+        if(event.shiftKey && event.keyCode === 89 && x != 0 && y != 0){
+            getResult()
+        } 
+    })
+
+    function clickHandler(event){
+        let canvas = document.getElementById("canvas");
+        let context = canvas.getContext("2d");
+        context.clearRect(0, 0, 600, 600);
+        abstandDiv.textContent = 0 + " Pixel";
+        let klickPositionDiv = document.getElementById("klickPosition");
+        let goalPositionDiv = document.getElementById("goalPosition");
+        goalPositionDiv.style.display = "none";
+
+        x = event.clientX;
+        y = event.clientY;    
+
+        klickPositionDiv.style.left = (x - 10) + "px"; // Die Hälfte der Breite des Elements abziehen
+        klickPositionDiv.style.top = (y - 10) + "px"; // Die Hälfte der Höhe des Elements abziehen
+
+        klickPositionDiv.style.display = "block";
+    }
+
+    function getResult(){
+        let goalPositionDiv = document.getElementById("goalPosition");
+
+        goalPositionDiv.style.left = (goalX - 10) + "px"; 
+        goalPositionDiv.style.top = (goalY - 10) + "px"; 
+        goalPositionDiv.style.display = "block";
+
+        abstand = Math.sqrt(Math.pow((goalX - x), 2) + Math.pow((goalY - y), 2)).toFixed(0);
+
+        drawLine(x,y,goalX,goalY)
+    }
+
+    function drawLine(x1, y1, x2, y2){
+        let canvas = document.getElementById("canvas");
+        let context = canvas.getContext("2d");
+        
+        context.lineWidth = 2
+        context.strokeStyle = "white"
+
+        let dx = x2 - x1;
+        let dy = y2 - y1;
+        let steps = Math.max(Math.abs(dx), Math.abs(dy));
+
+        let xIncrement = dx / steps;
+        let yIncrement = dy / steps;
+        let currentX = x1;
+        let currentY = y1;
+
+        let count = 0;
+        let animation = setInterval(function() {
+            context.clearRect(0, 0, 600, 600);
+            context.beginPath();
+            context.moveTo(x1, y1);
+            context.lineTo(currentX, currentY);
+            context.stroke();
+
+            currentX += xIncrement;
+            currentY += yIncrement;
+            count++;
+
+            abstandDiv.textContent = count + " Pixel";
+
+            if (count >= steps) {
+                clearInterval(animation);
+                abstandDiv.textContent = abstand + " Pixel";
+            }
+        }, 10);
+    }
+
+
+</script>
+<style>
+    body{
+        font-family: Roboto;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    #lsg-box {
+        width: 600px;
+        text-align: center;
+    }
+    #abstand {
+        width: 100%;
+    }
+    .pictureDiv{
+        width: 600px;
+        height: 600px;
+    }
+    #klickPosition {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 20px;
+        height: 20px;
+        border: solid white;
+        border-width: 2px;
+        border-radius: 50%;
+        display: none;
+    }
+    #goalPosition {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: none;
+    }
+    #canvas {
+        background-size: cover;
+    }
+</style>
+</html>

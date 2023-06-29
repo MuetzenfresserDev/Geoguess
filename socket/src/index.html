@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Socket IO</title>
+  </head>
+  <body>
+    <!-- -------------------------------------------------------------- -->
+
+    <canvas
+      id="canvas"
+      width="800"
+      height="592"
+      style="margin: 0; padding: 0"
+    ></canvas>
+    <img id="klickPosition" src="896145725287714888.png" />
+    <img id="goalPosition" src="target.png" />
+    <div id="lsg-box">
+      <div style="width: 50%; float: left">
+        <button onclick="chooseQuestion(1)">1</button>
+        <button onclick="chooseQuestion(2)">2</button>
+        <button onclick="chooseQuestion(3)">3</button>
+      </div>
+      <div id="abstand"></div>
+    </div>
+
+    <!-- -------------------------------------------------------------- -->
+
+    <!-- <h1>Get Response from Server</h1>
+    <button onclick="sendMessage()">Send Message to Server</button> -->
+
+    <script src="socket.io/socket.io.js"></script>
+
+    <script>
+      const socket = io();
+
+      socket.on("connect", () => {
+        console.log(socket.id);
+        
+      });
+
+      socket.on("init", () =>{
+      canv.style.backgroundImage = "url(" + "Khorinis.jpg" + ")";
+        goalX = 377;
+        goalY = 140;
+      })
+
+      function sendMessage() {
+        socket.emit("message", "Test Message");
+      }
+
+      socket.on("server", (msg) => {
+        console.log(msg);
+      });
+
+      //Update Player Position
+      socket.on("recClick", (data) => {
+        x=data.x;
+        y=data.y;
+
+        let context = canv.getContext("2d");
+        context.clearRect(0, 0, 800, 592);
+        abstandDiv.textContent = 0 + " Pixel Abstand";
+
+        let goalPositionDiv = document.getElementById("goalPosition");
+        goalPositionDiv.style.display = "none";
+
+        let klickPositionDiv = document.getElementById("klickPosition");
+
+        klickPositionDiv.style.left = x - 10 + "px"; // Die Hälfte der Breite des Elements abziehen
+        klickPositionDiv.style.top = y - 10 + "px"; // Die Hälfte der Höhe des Elements abziehen
+
+        klickPositionDiv.style.display = "block";
+
+      })
+
+      //Start get Result and Update all
+      socket.on("result",(data) => {
+        getResult();
+      })
+
+      socket.on("recQuestion", (data) => {
+        canv.style.backgroundImage = data.style;
+
+        goalX = data.goalX;
+        goalY = data.goalY;
+      })
+
+      // ---------------------------------------------------------------
+
+      let img = document.getElementById("canvas");
+      img.addEventListener("click", clickHandler);
+
+      var canv = document.getElementById("canvas");
+      canv.style.backgroundImage = "url(" + "Khorinis.jpg" + ")";
+
+      let goalX = 377;
+      let goalY = 140;
+
+      let x = 0;
+      let y = 0;
+
+      let abstand = 0;
+      let abstandDiv = document.getElementById("abstand");
+      abstandDiv.textContent = 0 + " Pixel Abstand";
+
+      document.addEventListener("keydown", function (event) {
+        if (event.shiftKey && event.keyCode === 89 && x != 0 && y != 0) {
+          socket.emit("result")
+          getResult();
+        }
+      });
+
+      function chooseQuestion(n) {
+        if (n == 1) {
+          canv.style.backgroundImage = "url(" + "Khorinis.jpg" + ")";
+          let style = canv.style.backgroundImage
+          goalX = 377;
+          goalY = 140;
+
+          socket.emit("question", {style,goalX,goalY})
+
+        } else if (n == 2) {
+          canv.style.backgroundImage = "url(" + "minental.jpg" + ")";
+          let style = canv.style.backgroundImage
+          goalX = 577;
+          goalY = 340;
+
+          socket.emit("question", {style,goalX,goalY})
+        } else {
+        }
+      }
+
+      function clickHandler(event) {
+        let context = canv.getContext("2d");
+        context.clearRect(0, 0, 800, 592);
+        abstandDiv.textContent = 0 + " Pixel Abstand";
+        let klickPositionDiv = document.getElementById("klickPosition");
+        let goalPositionDiv = document.getElementById("goalPosition");
+        goalPositionDiv.style.display = "none";
+
+        x = event.clientX;
+        y = event.clientY;
+
+        console.log("X: " + x + " Y: " + y);
+
+        klickPositionDiv.style.left = x - 10 + "px"; // Die Hälfte der Breite des Elements abziehen
+        klickPositionDiv.style.top = y - 10 + "px"; // Die Hälfte der Höhe des Elements abziehen
+
+        klickPositionDiv.style.display = "block";
+
+        socket.emit("click", {x,y});
+      }
+
+      function getResult() {
+        let goalPositionDiv = document.getElementById("goalPosition");
+
+        goalPositionDiv.style.left = goalX - 10 + "px";
+        goalPositionDiv.style.top = goalY - 10 + "px";
+        goalPositionDiv.style.display = "block";
+
+        abstand = Math.sqrt(
+          Math.pow(goalX - x, 2) + Math.pow(goalY - y, 2)
+        ).toFixed(0);
+
+        drawLine(x, y, goalX, goalY);
+      }
+
+      function drawLine(x1, y1, x2, y2) {
+        let canvas = document.getElementById("canvas");
+        let context = canvas.getContext("2d");
+
+        context.lineWidth = 2;
+        context.strokeStyle = "white";
+
+        let dx = x2 - x1;
+        let dy = y2 - y1;
+        let steps = Math.max(Math.abs(dx), Math.abs(dy));
+
+        let xIncrement = dx / steps;
+        let yIncrement = dy / steps;
+        let currentX = x1;
+        let currentY = y1;
+
+        let count = 0;
+        let animation = setInterval(function () {
+          context.clearRect(0, 0, 800, 592);
+          context.beginPath();
+          context.moveTo(x1, y1);
+          context.lineTo(currentX, currentY);
+          context.stroke();
+
+          currentX += xIncrement;
+          currentY += yIncrement;
+          count++;
+
+          abstandDiv.textContent = count + " Pixel Abstand";
+
+          if (count >= steps) {
+            clearInterval(animation);
+            abstandDiv.textContent = abstand + " Pixel Abstand";
+          }
+        }, 10);
+      }
+
+      // ---------------------------------------------------------------
+    </script>
+  </body>
+  <style>
+    body {
+      font-family: Helvetica;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      color: rgb(216, 216, 216);
+      background-color: #daf1d800;
+    }
+    #lsg-box {
+      width: 800px;
+      text-align: center;
+    }
+    #abstand {
+      width: 50%;
+      float: right;
+    }
+    .pictureDiv {
+      width: 800px;
+      height: 592px;
+    }
+    #klickPosition {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 20px;
+      height: 20px;
+      border: solid white;
+      border-width: 2px;
+      border-radius: 50%;
+      display: none;
+    }
+    #goalPosition {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: none;
+    }
+    #canvas {
+      background-size: cover;
+    }
+  </style>
+</html>

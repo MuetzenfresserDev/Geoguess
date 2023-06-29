@@ -87,6 +87,15 @@
         goalY = data.goalY;
       })
 
+      window.addEventListener('message', function(event){
+
+        console.log("EVENT")
+
+        if (event.data === 'message'){
+          getResult();
+        }
+      })
+
       // ---------------------------------------------------------------
 
       let img = document.getElementById("canvas");

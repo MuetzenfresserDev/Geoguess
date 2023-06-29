@@ -7,30 +7,34 @@
     <title>Document</title>
 </head>
 <body>
-    <canvas id="canvas" width="600" height="600" style="margin: 0; padding: 0;"></canvas>
+    <canvas id="canvas" width="800" height="592" style="margin: 0; padding: 0;"></canvas>
     <img id="klickPosition" src="896145725287714888.png">
     <img id="goalPosition" src="Pngitem_751158.png">
     <div id="lsg-box">
+        <div style="width: 50%; float: left;">
+            <button onclick="chooseQuestion(1)">1</button>
+            <button onclick="chooseQuestion(2)">2</button>
+            <button onclick="chooseQuestion(3)">3</button>
+        </div>
         <div id="abstand"></div>
     </div>
-
 </body>
 <script>
     let img = document.getElementById("canvas")
     img.addEventListener("click", clickHandler)
 
     var canv = document.getElementById("canvas")
-    canv.style.backgroundImage = "url(" + "Landkarte_Khorinis.jpg" + ")"
+    canv.style.backgroundImage = "url(" + "Khorinis.jpg" + ")"
 
-    let goalX = 309;
-    let goalY = 192;
+    let goalX = 377;
+    let goalY = 140;
 
     let x = 0;
     let y = 0;
 
     let abstand = 0;
     let abstandDiv = document.getElementById("abstand")
-    abstandDiv.textContent = 0 + " Pixel";
+    abstandDiv.textContent = 0 + " Pixel Abstand";
 
     document.addEventListener("keydown", function(event) {
         if(event.shiftKey && event.keyCode === 89 && x != 0 && y != 0){
@@ -38,17 +42,35 @@
         } 
     })
 
+    function chooseQuestion(n){
+        if(n == 1){
+            canv.style.backgroundImage = "url(" + "Khorinis.jpg" + ")"
+
+            goalX = 377;
+            goalY = 140;
+        } else if( n == 2){
+            canv.style.backgroundImage = "url(" + "minental.jpg" + ")"
+
+            goalX = 577;
+            goalY = 340;
+        } else{
+
+        }
+    }
+
     function clickHandler(event){
         let canvas = document.getElementById("canvas");
         let context = canvas.getContext("2d");
-        context.clearRect(0, 0, 600, 600);
-        abstandDiv.textContent = 0 + " Pixel";
+        context.clearRect(0, 0, 800, 592);
+        abstandDiv.textContent = 0 + " Pixel Abstand";
         let klickPositionDiv = document.getElementById("klickPosition");
         let goalPositionDiv = document.getElementById("goalPosition");
         goalPositionDiv.style.display = "none";
 
         x = event.clientX;
         y = event.clientY;    
+
+        console.log('X: ' + x + ' Y: ' + y)
 
         klickPositionDiv.style.left = (x - 10) + "px"; // Die Hälfte der Breite des Elements abziehen
         klickPositionDiv.style.top = (y - 10) + "px"; // Die Hälfte der Höhe des Elements abziehen
@@ -86,7 +108,7 @@
 
         let count = 0;
         let animation = setInterval(function() {
-            context.clearRect(0, 0, 600, 600);
+            context.clearRect(0, 0, 800, 592);
             context.beginPath();
             context.moveTo(x1, y1);
             context.lineTo(currentX, currentY);
@@ -96,11 +118,11 @@
             currentY += yIncrement;
             count++;
 
-            abstandDiv.textContent = count + " Pixel";
+            abstandDiv.textContent = count + " Pixel Abstand";
 
             if (count >= steps) {
                 clearInterval(animation);
-                abstandDiv.textContent = abstand + " Pixel";
+                abstandDiv.textContent = abstand + " Pixel Abstand";
             }
         }, 10);
     }
@@ -109,21 +131,24 @@
 </script>
 <style>
     body{
-        font-family: Roboto;
+        font-family: Helvetica;
         margin: 0;
         padding: 0;
         box-sizing: border-box;
+        color: rgb(216, 216, 216);
+        background-color: #daf1d800;
     }
     #lsg-box {
-        width: 600px;
+        width: 800px;
         text-align: center;
     }
     #abstand {
-        width: 100%;
+        width: 50%;
+        float: right;
     }
     .pictureDiv{
-        width: 600px;
-        height: 600px;
+        width: 800px;
+        height: 592px;
     }
     #klickPosition {
         position: absolute;

@@ -41,7 +41,7 @@
       });
 
       socket.on("init", () =>{
-      canv.style.backgroundImage = "url(" + "Khorinis.jpg" + ")";
+      canv.style.backgroundImage = "url(" + "khorinisSmall.jpg" + ")";
         goalX = 377;
         goalY = 140;
       })
@@ -68,8 +68,8 @@
 
         let klickPositionDiv = document.getElementById("klickPosition");
 
-        klickPositionDiv.style.left = x - 10 + "px"; // Die Hälfte der Breite des Elements abziehen
-        klickPositionDiv.style.top = y - 10 + "px"; // Die Hälfte der Höhe des Elements abziehen
+        klickPositionDiv.style.left = x - 15 + "px"; // Die Hälfte der Breite des Elements abziehen
+        klickPositionDiv.style.top = y - 15 + "px"; // Die Hälfte der Höhe des Elements abziehen
 
         klickPositionDiv.style.display = "block";
 
@@ -102,7 +102,7 @@
       img.addEventListener("click", clickHandler);
 
       var canv = document.getElementById("canvas");
-      canv.style.backgroundImage = "url(" + "Khorinis.jpg" + ")";
+      canv.style.backgroundImage = "url(" + "khorinisSmall.jpg" + ")";
 
       let goalX = 377;
       let goalY = 140;
@@ -123,7 +123,7 @@
 
       function chooseQuestion(n) {
         if (n == 1) {
-          canv.style.backgroundImage = "url(" + "Khorinis.jpg" + ")";
+          canv.style.backgroundImage = "url(" + "khorinisSmall.jpg" + ")";
           let style = canv.style.backgroundImage
           goalX = 377;
           goalY = 140;
@@ -131,7 +131,7 @@
           socket.emit("question", {style,goalX,goalY})
 
         } else if (n == 2) {
-          canv.style.backgroundImage = "url(" + "minental.jpg" + ")";
+          canv.style.backgroundImage = "url(" + "minentalSmall.jpg" + ")";
           let style = canv.style.backgroundImage
           goalX = 577;
           goalY = 340;
@@ -154,8 +154,8 @@
 
         console.log("X: " + x + " Y: " + y);
 
-        klickPositionDiv.style.left = x - 10 + "px"; // Die Hälfte der Breite des Elements abziehen
-        klickPositionDiv.style.top = y - 10 + "px"; // Die Hälfte der Höhe des Elements abziehen
+        klickPositionDiv.style.left = x - 15 + "px"; // Die Hälfte der Breite des Elements abziehen
+        klickPositionDiv.style.top = y - 15 + "px"; // Die Hälfte der Höhe des Elements abziehen
 
         klickPositionDiv.style.display = "block";
 
@@ -165,8 +165,8 @@
       function getResult() {
         let goalPositionDiv = document.getElementById("goalPosition");
 
-        goalPositionDiv.style.left = goalX - 10 + "px";
-        goalPositionDiv.style.top = goalY - 10 + "px";
+        goalPositionDiv.style.left = goalX - 15 + "px";
+        goalPositionDiv.style.top = goalY - 15 + "px";
         goalPositionDiv.style.display = "block";
 
         abstand = Math.sqrt(
@@ -180,7 +180,7 @@
         let canvas = document.getElementById("canvas");
         let context = canvas.getContext("2d");
 
-        context.lineWidth = 2;
+        context.lineWidth = 3;
         context.strokeStyle = "white";
 
         let dx = x2 - x1;
@@ -241,8 +241,8 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 20px;
-      height: 20px;
+      width: 30px;
+      height: 30px;
       border: solid white;
       border-width: 2px;
       border-radius: 50%;
@@ -252,8 +252,8 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 20px;
-      height: 20px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       display: none;
     }

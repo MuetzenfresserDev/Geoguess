@@ -11,7 +11,11 @@ const port = process.env.PORT||8080;
 //server to socket
 const io = require('socket.io')(http);
 
+let playerlist = []
+let iconList = ["nameless.png","nameless.png","nameless.png","nameless.png"]
+
 app.use(express.static('assets'));
+app.use(express.static('src'));
 
 //route
 app.get('/', (req,res) =>{
@@ -21,16 +25,29 @@ app.get('/', (req,res) =>{
 //new connection
 io.on('connection', socket => {
 
+    socket.on("join room", (roomName, cb) => {
+        socket.join(roomName)
+    })
+    
     console.log("User connected")
 
-    io.emit("init")
+    socket.emit("init")
+
+    socket.on('playerList', () => {
+        socket.emit('list',playerlist)
+    })
 
     socket.on('disconnect', () =>{
-        console.log("User disconnected")
+        playerlist = playerlist.filter(item => item.id !== socket.id)
     })
 
     socket.on('message', msg => {
         console.log(msg)
+    })
+
+    socket.on("getResultForClient", () => {
+        console.log("playerView")
+        io.emit("resultForClient")
     })
 
     //emit event
@@ -38,17 +55,44 @@ io.on('connection', socket => {
 
     socket.on("click", (data) => {
 
-        console.log("User Click erkannt", data)
 
-        io.emit("recClick", data);
+        for (let i = 0; i < playerlist.length; i++) {
+            const element = playerlist[i];
+
+            if(element.id == data.id){
+                playerlist[i] = data 
+            }
+
+        }
+    
+    
+
+        socket.emit("recClick", data);
     })
 
     socket.on("result", () =>{
-        io.emit("result");
+        socket.emit("result");
     })
 
     socket.on("question",(data) => {
         io.emit("recQuestion",data)
+    })
+
+    socket.on("player", (spieler) =>{
+
+        if(playerlist.length > 0 && playerlist.length <4){
+            spieler.icon = iconList[playerlist.length]
+        } else if(playerlist.length == 0) {
+            spieler.icon = iconList[0]
+        }
+
+        console.log(spieler)
+        playerlist.push(spieler)
+
+
+
+        socket.emit("playerSetup", spieler.icon)
+
     })
 
 })

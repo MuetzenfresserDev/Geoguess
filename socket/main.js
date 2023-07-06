@@ -46,7 +46,6 @@ io.on('connection', socket => {
     })
 
     socket.on("getResultForClient", () => {
-        console.log("playerView")
         io.emit("resultForClient")
     })
 
@@ -58,9 +57,9 @@ io.on('connection', socket => {
 
         for (let i = 0; i < playerlist.length; i++) {
             const element = playerlist[i];
-
             if(element.id == data.id){
                 playerlist[i] = data 
+                console.log(playerlist[i])
             }
 
         }
@@ -85,8 +84,6 @@ io.on('connection', socket => {
         } else if(playerlist.length == 0) {
             spieler.icon = iconList[0]
         }
-
-        console.log(spieler)
         playerlist.push(spieler)
 
 

@@ -16,12 +16,13 @@
           style="margin: 0; padding: 0; display: none"
         ></canvas>
         <div id="host-box">
-          <button onclick="revealPlayerLocations()">Spieler Anzeigen</button>
-          <button onclick="updatePlayerPositions()">UpdatePositions</button>
-          <button onclick="showResults()">Zeige Entfernungen</button>
+          <button id="anzeigen" disabled="true" onclick="revealPlayerLocations()">Spieler Anzeigen</button>
+          <button id="update" onclick="updatePlayerPositions(1)">UpdatePositions</button>
+          <button id="entfernung" disabled="true" onclick="showResults()">Zeige Entfernungen</button>
         </div>
       </div>
 
+      <!-- PUNKTEANZAHL ANZEIGE RECHTS -->
       <div id="hostAbstand" style="float: left; height: 592px; width:400px; position: relative; display: none;">
         <div id="test" style="margin-left: 20px; word-break: break-all; font-size: large;">
           <div>
@@ -50,22 +51,26 @@
     <img id="klickPosition" class="icon" src="nameless.png" />
 
     <img id="klickPositionHost0" class="icon" src="nameless.png" />
+    <div class="overlay" id="playerName0"></div>
     <img id="klickPositionHost1" class="icon" src="nameless.png" />
+    <div class="overlay" id="playerName1"></div>
     <img id="klickPositionHost2" class="icon" src="nameless.png" />
+    <div class="overlay" id="playerName2"></div>
     <img id="klickPositionHost3" class="icon" src="nameless.png" />
+    <div class="overlay" id="playerName3"></div>
 
     <img id="goalPosition" src="target.png" />
     <div id="player-box">
-      <div style="width: 33%; float: left">
+      <div style="width: 40%; float: right">
         <button onclick="chooseQuestion(1)" style="font-size: large">1</button>
         <button onclick="chooseQuestion(2)" style="font-size: large">2</button>
         <button onclick="chooseQuestion(3)" style="font-size: large">3</button>
       </div>
-      <div style="width: 33%">
-        <input id="inp" placeholder="Name" />
-        <button onclick="initPlayer()"></button>
+      <div style="width: 60%;" id="nameInput">
+        <input id="inp" placeholder="Name" style="font-size: large; margin: 5px; padding: 0.5em;" />
+        <button onclick="initPlayer()" style="font-size: large;">Speichern</button>
       </div>
-      <div id="abstand"></div>
+      <div style="width: 60%; margin-top: 13px;" id="abstand"></div>
     </div>
 
     <!-- -------------------------------------------------------------- -->
@@ -106,7 +111,13 @@
 
       let interval;
 
-      function updatePlayerPositions() {
+      function updatePlayerPositions(n = 0) {
+
+        if(n != 0){
+          anzeigen.disabled = false;
+        entfernung.disabled = false;
+        }
+
         if (canv != undefined) {
           let goalPositionDiv = document.getElementById("goalPosition");
           goalPositionDiv.style.display = "none";
@@ -116,9 +127,13 @@
         }
 
         klickPositionHost0.style.display = "none";
+        playerName0.style.display = "none";
         klickPositionHost1.style.display = "none";
+        playerName1.style.display = "none";
         klickPositionHost2.style.display = "none";
+        playerName2.style.display = "none";
         klickPositionHost3.style.display = "none";
+        playerName3.style.display = "none";
 
         interval = setInterval(() => {
           socket.emit("playerList");
@@ -146,25 +161,56 @@
           if (i == 0) {
             klickPositionHost0.style.left = player.x - 15 + "px"; // Die Hälfte der Breite des Elements abziehen
             klickPositionHost0.style.top = player.y - 15 + "px"; // Die Hälfte der Höhe des Elements abziehen
+            playerName0.style.left = player.x - 32 + "px";
+            playerName0.style.top = player.y + 20 + "px";
             klickPositionHost0.style.display = "block";
+            playerName0.style.display = "block";
+            nameRef = document.getElementById("playerName0");
+            nameRef.innerText = player.name;         
           } else if (i == 1) {
             klickPositionHost1.style.left = player.x - 15 + "px"; // Die Hälfte der Breite des Elements abziehen
             klickPositionHost1.style.top = player.y - 15 + "px"; // Die Hälfte der Höhe des Elements abziehen
+            playerName1.style.left = player.x - 32 + "px";
+            playerName1.style.top = player.y + 20 + "px";
             klickPositionHost1.style.display = "block";
+            playerName1.style.display = "block";
+            nameRef = document.getElementById("playerName1");
+            nameRef.innerText = player.name; 
           } else if (i == 2) {
             klickPositionHost2.style.left = player.x - 15 + "px"; // Die Hälfte der Breite des Elements abziehen
             klickPositionHost2.style.top = player.y - 15 + "px"; // Die Hälfte der Höhe des Elements abziehen
+            playerName2.style.left = player.x - 32 + "px";
+            playerName2.style.top = player.y + 20 + "px";
             klickPositionHost2.style.display = "block";
+            playerName2.style.display = "block";
+            nameRef = document.getElementById("playerName2");
+            nameRef.innerText = player.name; 
           } else if (i == 3) {
             klickPositionHost3.style.left = player.x - 15 + "px"; // Die Hälfte der Breite des Elements abziehen
             klickPositionHost3.style.top = player.y - 15 + "px"; // Die Hälfte der Höhe des Elements abziehen
+            playerName3.style.left = player.x - 32 + "px";
+            playerName3.style.top = player.y + 20 + "px";
             klickPositionHost3.style.display = "block";
+            playerName3.style.display = "block";
+            nameRef = document.getElementById("playerName3");
+            nameRef.innerText = player.name; 
           }
         }
       }
 
       function showResults() {
+        entfernung.disabled = true;
+        anzeigen.disabled = true;
+
         console.log("test");
+
+        socket.on("list", (data) => {
+          playerlist = data;
+        })
+
+        socket.emit("playerList");
+        
+
         socket.emit("getResultForClient");
 
         document.getElementById("hostAbstand").style.display = "block";
@@ -178,6 +224,8 @@
         for (let i = 0; i < playerlist.length; i++) {
           const element = playerlist[i];
           
+          console.log(element.abstand)
+
           drawLineHost(element.x, element.y, goalX, goalY, i, element.abstand, element.name)
 
         }
@@ -206,7 +254,7 @@
         }
 
 
-        context.lineWidth = 3;
+        context.lineWidth = 2;
         context.strokeStyle = "white";
 
         let dx = x2 - x1;
@@ -254,6 +302,11 @@
       box-sizing: border-box;
       color: rgb(216, 216, 216);
       background-color: #daf1d800;
+
+      --theme-colour: rgb(37, 150, 190);
+      --theme-colour-darker: #135f0c;
+      --theme-colour-hover: rgb(43, 172, 219);
+      --theme-colour-shadow: #25752533;
     }
     #player-box {
       width: 800px;
@@ -262,6 +315,7 @@
     }
     #host-box {
       display: none;
+      text-align: center;
     }
     #abstand {
       width: 33%;
@@ -302,5 +356,33 @@
   -ms-transform: translateY(-50%);
   transform: translateY(-50%);
     }
+    .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 68px;
+    height: 68px;
+    text-align: center;
+    color: white;
+    z-index: 9999; /* Wert für die Stapelreihenfolge */
+    font-size: 15px;
+    display: none;
+}
+button{
+  background-color: var(--theme-colour);
+  border-radius: 5px;
+  border: none;
+  box-shadow: 0 5px 5px var(--theme-colour-shadow);
+  color: white;
+  cursor: pointer;
+  font-family: sans-serif;
+  font-size: small;
+  margin: 5px;
+  padding: 0.5em 2em;
+}
+button:disabled {
+    cursor: default;
+    opacity: 0.5;
+}
   </style>
 </html>

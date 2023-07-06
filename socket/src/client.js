@@ -50,6 +50,8 @@ document.addEventListener("keydown", function (event) {
 
 function initPlayer(){
 
+    nameInput.style.display = "none"
+
     img = document.getElementById("canvas");
     img.addEventListener("click", clickHandler);
 
@@ -81,12 +83,24 @@ function chooseQuestion(n) {
     goalX = 377;
     goalY = 140;
 
+    spieler.abstand = Math.sqrt(Math.pow(goalX - spieler.x, 2) + Math.pow(goalY - spieler.y, 2)).toFixed(
+      0
+    );
+
+    socket.emit("click", spieler );
+
     socket.emit("question", { style, goalX, goalY });
   } else if (n == 2) {
     canv.style.backgroundImage = "url(" + "minentalSmall.jpg" + ")";
     let style = canv.style.backgroundImage;
     goalX = 577;
     goalY = 340;
+
+    spieler.abstand = Math.sqrt(Math.pow(goalX - spieler.x, 2) + Math.pow(goalY - spieler.y, 2)).toFixed(
+      0
+    );
+
+    socket.emit("click", spieler );
 
     socket.emit("question", { style, goalX, goalY });
   } else {
@@ -135,7 +149,7 @@ function drawLine(x1, y1, x2, y2) {
   let canvas = document.getElementById("canvas");
   let context = canvas.getContext("2d");
 
-  context.lineWidth = 3;
+  context.lineWidth = 2;
   context.strokeStyle = "white";
 
   let dx = x2 - x1;

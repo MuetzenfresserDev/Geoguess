@@ -66,11 +66,17 @@
 
     <img id="goalPosition" src="target.png" />
     <div id="player-box">
+      <div style="width: 33%; float: right">
+        <button onclick="chooseQuestion(1)" style="font-size: small">1</button>
+        <button onclick="chooseQuestion(2)" style="font-size: small">2</button>
+        <button onclick="chooseQuestion(3)" style="font-size: small">3</button>
+      </div>
       <div style="width: 60%;" id="nameInput">
         <input id="inp" placeholder="Name" style="font-size: large; margin: 5px; padding: 0.5em;" />
         <button onclick="initPlayer()" style="font-size: large;">Speichern</button>
       </div>
-      <div style="width: 60%; margin-top: 13px;" id="abstand"></div>
+      <div style="width: 60%; margin-top: 13px;" id="abstand">
+      </div>
     </div>
 
     <!-- -------------------------------------------------------------- -->

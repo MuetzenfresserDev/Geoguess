@@ -42,9 +42,9 @@ let spieler;
 
 //shift + y to start game
 document.addEventListener("keydown", function (event) {
-  if (event.shiftKey && event.keyCode === 89 && spieler.x != 0 && spieler.y != 0) {
-    socket.emit("result");
-    getResult();
+  if (event.shiftKey && event.keyCode === 89) {
+    console.log("test")
+    document.getElementById("btn2").style.visibility = "visible"
   }
 });
 
@@ -83,24 +83,12 @@ function chooseQuestion(n) {
     goalX = 377;
     goalY = 140;
 
-    spieler.abstand = Math.sqrt(Math.pow(goalX - spieler.x, 2) + Math.pow(goalY - spieler.y, 2)).toFixed(
-      0
-    );
-
-    socket.emit("click", spieler );
-
     socket.emit("question", { style, goalX, goalY });
   } else if (n == 2) {
     canv.style.backgroundImage = "url(" + "minentalSmall.jpg" + ")";
     let style = canv.style.backgroundImage;
     goalX = 577;
     goalY = 340;
-
-    spieler.abstand = Math.sqrt(Math.pow(goalX - spieler.x, 2) + Math.pow(goalY - spieler.y, 2)).toFixed(
-      0
-    );
-
-    socket.emit("click", spieler );
 
     socket.emit("question", { style, goalX, goalY });
   } else {
@@ -235,6 +223,9 @@ socket.on("connect", () => {
   });
   
   socket.on("recQuestion", (data) => {
+
+    console.log("recQuestion")
+
     canv.style.backgroundImage = data.style;
   
     goalX = data.goalX;

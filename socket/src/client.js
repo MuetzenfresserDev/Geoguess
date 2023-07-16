@@ -77,21 +77,34 @@ function initPlayer(){
 
 //bild + zielpunkte festlegen
 function chooseQuestion(n) {
-  if (n == 1) {
+  if (n == 1) { //Wo ist Rosie, Gorn 100
     canv.style.backgroundImage = "url(" + "khorinisSmall.jpg" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 377;
+    goalX = 535;
+    goalY = 268;
+
+    socket.emit("question", { style, goalX, goalY });
+  } else if (n == 2) { //Wo ist Gorn, Gorn 200
+    canv.style.backgroundImage = "url(" + "g1MinentalSmall.png" + ")";
+    let style = canv.style.backgroundImage;
+    goalX = 181;
     goalY = 140;
 
     socket.emit("question", { style, goalX, goalY });
-  } else if (n == 2) {
-    canv.style.backgroundImage = "url(" + "minentalSmall.jpg" + ")";
+  } else if (n == 3) { //Wo ist der Held, Held 500
+    canv.style.backgroundImage = "url(" + "g1MinentalSmall.png" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 577;
-    goalY = 340;
+    goalX = 312;
+    goalY = 449;
 
     socket.emit("question", { style, goalX, goalY });
-  } else {
+  } else if (n == 4){ //Diego hat sich versteckt, Diego 300
+    canv.style.backgroundImage = "url(" + "khorinisSmall.jpg" + ")";
+    let style = canv.style.backgroundImage;
+    goalX = 276;
+    goalY = 490;
+
+    socket.emit("question", { style, goalX, goalY });
   }
 }
 

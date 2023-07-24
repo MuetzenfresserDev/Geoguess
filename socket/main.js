@@ -12,7 +12,7 @@ const port = process.env.PORT||8080;
 const io = require('socket.io')(http);
 
 let playerlist = []
-let iconList = ["nameless.png","nameless.png","nameless.png","nameless.png"]
+let iconList = ["Diego.png","Lester.png","Milten.png","Gorn.png"]
 
 app.use(express.static('assets'));
 app.use(express.static('src'));

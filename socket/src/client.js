@@ -244,6 +244,10 @@ socket.on("connect", () => {
     goalX = data.goalX;
     goalY = data.goalY;
   });
+
+  socket.on("stayConnected", (data) => {
+    console.log("stayConnected")
+  })
   
   window.addEventListener("message", function (event) {
     console.log("EVENT");

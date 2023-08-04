@@ -92,6 +92,10 @@ io.on('connection', socket => {
 
     })
 
+    setInterval(() => {
+        socket.emit("stayConnected")
+    }, 5000);
+
 })
 
 http.listen(port, () =>{

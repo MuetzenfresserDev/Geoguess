@@ -77,35 +77,35 @@ function initPlayer(){
 
 //bild + zielpunkte festlegen
 function chooseQuestion(n) {
-  if (n == 1) { //Wo ist Rosie, Gorn 100
+  if (n == 1) { //In der Stadt Geo5
     canv.style.backgroundImage = "url(" + "khorinisSmall.jpg" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 535;
-    goalY = 268;
+    goalX = 143;
+    goalY = 361;
 
     socket.emit("question", { style, goalX, goalY });
-  } else if (n == 2) { //Wo ist Gorn, Gorn 200
-    canv.style.backgroundImage = "url(" + "g1MinentalSmall.png" + ")";
+  } else if (n == 2) { //Schwarzer Troll Geo4
+    canv.style.backgroundImage = "url(" + "khorinisSmall.jpg" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 181;
-    goalY = 140;
+    goalX = 544;
+    goalY = 69;
 
     socket.emit("question", { style, goalX, goalY });
   } else if (n == 3) { //Wo ist der Held, Held 500
     canv.style.backgroundImage = "url(" + "g1MinentalSmall.png" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 312;
-    goalY = 449;
+    goalX = 377;
+    goalY = 320;
 
     socket.emit("question", { style, goalX, goalY });
-  } else if (n == 4){ //Diego hat sich versteckt, Diego 300
+  } /* else if (n == 4){ //Diego hat sich versteckt, Diego 300
     canv.style.backgroundImage = "url(" + "khorinisSmall.jpg" + ")";
     let style = canv.style.backgroundImage;
     goalX = 276;
     goalY = 490;
 
     socket.emit("question", { style, goalX, goalY });
-  }
+  } */
 }
 
 function clickHandler(event) {

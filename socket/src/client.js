@@ -78,10 +78,10 @@ function initPlayer(){
 //bild + zielpunkte festlegen
 function chooseQuestion(n) {
   if (n == 1) { //In der Stadt Geo5
-    canv.style.backgroundImage = "url(" + "khorinisSmall.jpg" + ")";
+    canv.style.backgroundImage = "url(" + "khorinis_city.jpg" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 143;
-    goalY = 361;
+    goalX = 326;
+    goalY = 461;
 
     socket.emit("question", { style, goalX, goalY });
   } else if (n == 2) { //Schwarzer Troll Geo4

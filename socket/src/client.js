@@ -78,24 +78,24 @@ function initPlayer(){
 //bild + zielpunkte festlegen
 function chooseQuestion(n) {
   if (n == 1) { //In der Stadt Geo5
-    canv.style.backgroundImage = "url(" + "khorinis_city.jpg" + ")";
+    canv.style.backgroundImage = "url(" + "g3Full.jpg" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 326;
-    goalY = 461;
+    goalX = 310;
+    goalY = 501;
 
     socket.emit("question", { style, goalX, goalY });
   } else if (n == 2) { //Schwarzer Troll Geo4
-    canv.style.backgroundImage = "url(" + "khorinisSmall.jpg" + ")";
+    canv.style.backgroundImage = "url(" + "g3Full.jpg" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 544;
-    goalY = 69;
+    goalX = 453;
+    goalY = 502;
 
     socket.emit("question", { style, goalX, goalY });
   } else if (n == 3) { //Wo ist der Held, Held 500
-    canv.style.backgroundImage = "url(" + "g1MinentalSmall.png" + ")";
+    canv.style.backgroundImage = "url(" + "g3Full.jpg" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 377;
-    goalY = 320;
+    goalX = 576;
+    goalY = 450;
 
     socket.emit("question", { style, goalX, goalY });
   } /* else if (n == 4){ //Diego hat sich versteckt, Diego 300

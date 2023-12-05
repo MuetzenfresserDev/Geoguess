@@ -77,35 +77,35 @@ function initPlayer(){
 
 //bild + zielpunkte festlegen
 function chooseQuestion(n) {
-  if (n == 1) { //In der Stadt Geo5
-    canv.style.backgroundImage = "url(" + "g3Full.jpg" + ")";
+  if (n == 1) { //Geo 1 Held 400
+    canv.style.backgroundImage = "url(" + "g1MinentalSmall.png" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 310;
-    goalY = 501;
+    goalX = 241;
+    goalY = 469;
 
     socket.emit("question", { style, goalX, goalY });
-  } else if (n == 2) { //Schwarzer Troll Geo4
-    canv.style.backgroundImage = "url(" + "g3Full.jpg" + ")";
+  } else if (n == 2) { //Geo 2 Diego 300
+    canv.style.backgroundImage = "url(" + "g1MinentalSmall.png" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 453;
-    goalY = 502;
+    goalX = 370;
+    goalY = 364;
 
     socket.emit("question", { style, goalX, goalY });
-  } else if (n == 3) { //Wo ist der Held, Held 500
-    canv.style.backgroundImage = "url(" + "g3Full.jpg" + ")";
-    let style = canv.style.backgroundImage;
-    goalX = 576;
-    goalY = 450;
-
-    socket.emit("question", { style, goalX, goalY });
-  } /* else if (n == 4){ //Diego hat sich versteckt, Diego 300
+  } else if (n == 3) { //Geo 3 Lester 500
     canv.style.backgroundImage = "url(" + "khorinisSmall.jpg" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 276;
-    goalY = 490;
+    goalX = 601;
+    goalY = 300;
 
     socket.emit("question", { style, goalX, goalY });
-  } */
+  }  else if (n == 4){ //Geo 4 milten 300
+    canv.style.backgroundImage = "url(" + "minentalSmall.jpg" + ")";
+    let style = canv.style.backgroundImage;
+    goalX = 385;
+    goalY = 488;
+
+    socket.emit("question", { style, goalX, goalY });
+  } 
 }
 
 function clickHandler(event) {

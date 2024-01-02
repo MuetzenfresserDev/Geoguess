@@ -37,6 +37,10 @@ io.on('connection', socket => {
         socket.emit('list',playerlist)
     })
 
+    socket.on("pong", (data) => {
+        console.log('pong')
+    })
+    
     socket.on('disconnect', () =>{
         playerlist = playerlist.filter(item => item.id !== socket.id)
     })

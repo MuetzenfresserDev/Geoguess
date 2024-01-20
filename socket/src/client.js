@@ -247,6 +247,7 @@ socket.on("connect", () => {
 
   socket.on("stayConnected", (data) => {
     console.log("stayConnected")
+    socket.emit("pong",1)
   })
   
   window.addEventListener("message", function (event) {

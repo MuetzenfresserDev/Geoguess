@@ -77,25 +77,25 @@ function initPlayer(){
 
 //bild + zielpunkte festlegen
 function chooseQuestion(n) {
-  if (n == 1) { //Geo 1 Diego 500
+  if (n == 1) { //Geo 1 Milten 300
     canv.style.backgroundImage = "url(" + "khorinisSmall.jpg" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 80;
-    goalY = 460;
+    goalX = 93;
+    goalY = 232;
 
     socket.emit("question", { style, goalX, goalY });
-  } else if (n == 2) { //Geo 2 Gorn 300
-    canv.style.backgroundImage = "url(" + "g1MinentalSmall.png" + ")";
+  } else if (n == 2) { //Geo 2 Gorn 100
+    canv.style.backgroundImage = "url(" + "minentalSmall.jpg" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 422;
-    goalY = 417;
+    goalX = 243;
+    goalY = 407;
 
     socket.emit("question", { style, goalX, goalY });
   } else if (n == 3) { //Geo 3 Gorn 400
-    canv.style.backgroundImage = "url(" + "g1MinentalSmall.png" + ")";
+    canv.style.backgroundImage = "url(" + "khorinisSmall.jpg" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 321;
-    goalY = 269;
+    goalX = 260;
+    goalY = 344;
 
     socket.emit("question", { style, goalX, goalY });
   }  else if (n == 4){ //Geo 4 milten 300

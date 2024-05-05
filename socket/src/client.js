@@ -56,7 +56,7 @@ function initPlayer(){
     img.addEventListener("click", clickHandler);
 
      canv = document.getElementById("canvas");
-    canv.style.backgroundImage = "url(" + "khorinisSmall.jpg" + ")";
+    //canv.style.backgroundImage = "url(" + "khorinisSmall.jpg" + ")";
 
      abstandDiv = document.getElementById("abstand");
     abstandDiv.textContent = 0 + " Pixel Abstand";
@@ -77,32 +77,34 @@ function initPlayer(){
 
 //bild + zielpunkte festlegen
 function chooseQuestion(n) {
-  if (n == 1) { //Geo 1 Milten 300
-    canv.style.backgroundImage = "url(" + "khorinisSmall.jpg" + ")";
+  if (n == 1) { //Geo 1
+    canv.style.backgroundImage = "url(" + "100FrageMap.png" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 93;
-    goalY = 232;
+    goalX = 175;
+    goalY = 401;
+
+    console.log(canv.style.backgroundImage)
 
     socket.emit("question", { style, goalX, goalY });
-  } else if (n == 2) { //Geo 2 Gorn 100
-    canv.style.backgroundImage = "url(" + "minentalSmall.jpg" + ")";
+  } else if (n == 2) { //Geo 2
+    canv.style.backgroundImage = "url(" + "200FrageMap.png" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 243;
-    goalY = 407;
+    goalX = 659;
+    goalY = 238;
 
     socket.emit("question", { style, goalX, goalY });
-  } else if (n == 3) { //Geo 3 Gorn 400
-    canv.style.backgroundImage = "url(" + "khorinisSmall.jpg" + ")";
+  } else if (n == 3) { //Geo 3
+    canv.style.backgroundImage = "url(" + "400FrageMap.png" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 260;
-    goalY = 344;
+    goalX = 481;
+    goalY = 546;
 
     socket.emit("question", { style, goalX, goalY });
   }  else if (n == 4){ //Geo 4 milten 300
-    canv.style.backgroundImage = "url(" + "minentalSmall.jpg" + ")";
+    canv.style.backgroundImage = "url(" + "500FrageMap.png" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 385;
-    goalY = 488;
+    goalX = 131;
+    goalY = 238;
 
     socket.emit("question", { style, goalX, goalY });
   } 

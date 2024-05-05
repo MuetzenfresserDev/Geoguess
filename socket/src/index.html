@@ -24,6 +24,7 @@
             <button onclick="chooseQuestion(1)" style="font-size: small">1</button>
             <button onclick="chooseQuestion(2)" style="font-size: small">2</button>
             <button onclick="chooseQuestion(3)" style="font-size: small">3</button>
+            <button onclick="chooseQuestion(4)" style="font-size: small">4</button>
           </div>
         </div>
       </div>
@@ -67,13 +68,14 @@
 
     <img id="goalPosition" src="target.png" />
     <div id="player-box">
-      <div style="width: 33%; float: right">
+      <div disbaled="true" style="width: 33%; float: right">
         <button onclick="chooseQuestion(1)" style="font-size: small">1</button>
         <button onclick="chooseQuestion(2)" style="font-size: small">2</button>
         <button onclick="chooseQuestion(3)" style="font-size: small">3</button>
+        <button onclick="chooseQuestion(4)" style="font-size: small">4</button>
       </div>
       <div style="width: 60%;" id="nameInput">
-        <input id="inp" placeholder="Name" style="font-size: large; margin: 5px; padding: 0.5em;" />
+        <input id="inp" placeholder="Name, Speichern!" style="font-size: large; margin: 5px; padding: 0.5em;" />
         <button onclick="initPlayer()" style="font-size: large;">Speichern</button>
       </div>
       <div style="width: 60%; margin-top: 13px;" id="abstand">
@@ -152,7 +154,7 @@
 
       function initCanvas() {
         canv = document.getElementById("canvas");
-        canv.style.backgroundImage = "url(" + "g3Full.jpg" + ")";
+        //canv.style.backgroundImage = "url(" + "g3Full.jpg" + ")";
       }
 
       function revealPlayerLocations() {

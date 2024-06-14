@@ -78,33 +78,40 @@ function initPlayer(){
 //bild + zielpunkte festlegen
 function chooseQuestion(n) {
   if (n == 1) { //Geo 1
-    canv.style.backgroundImage = "url(" + "100FrageMap.png" + ")";
+    canv.style.backgroundImage = "url(" + "Map.png" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 175;
-    goalY = 401;
+    goalX = 467;
+    goalY = 155;
 
     console.log(canv.style.backgroundImage)
 
     socket.emit("question", { style, goalX, goalY });
   } else if (n == 2) { //Geo 2
-    canv.style.backgroundImage = "url(" + "200FrageMap.png" + ")";
+    canv.style.backgroundImage = "url(" + "Map.png" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 659;
-    goalY = 238;
+    goalX = 342;
+    goalY = 571;
 
     socket.emit("question", { style, goalX, goalY });
   } else if (n == 3) { //Geo 3
-    canv.style.backgroundImage = "url(" + "400FrageMap.png" + ")";
+    canv.style.backgroundImage = "url(" + "Map.png" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 481;
-    goalY = 546;
+    goalX = 134;
+    goalY = 246;
 
     socket.emit("question", { style, goalX, goalY });
-  }  else if (n == 4){ //Geo 4 milten 300
-    canv.style.backgroundImage = "url(" + "500FrageMap.png" + ")";
+  }  else if (n == 4){ //Geo 4
+    canv.style.backgroundImage = "url(" + "Map.png" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 131;
-    goalY = 238;
+    goalX = 23;
+    goalY = 168;
+
+    socket.emit("question", { style, goalX, goalY });
+  } else if (n == 5){ //Geo 5
+    canv.style.backgroundImage = "url(" + "Map.png" + ")";
+    let style = canv.style.backgroundImage;
+    goalX = 248;
+    goalY = 437;
 
     socket.emit("question", { style, goalX, goalY });
   } 

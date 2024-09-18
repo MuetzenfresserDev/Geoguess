@@ -78,41 +78,34 @@ function initPlayer(){
 //bild + zielpunkte festlegen
 function chooseQuestion(n) {
   if (n == 1) { //Geo 1
-    canv.style.backgroundImage = "url(" + "Map.png" + ")";
+    canv.style.backgroundImage = "url(" + "G3MapHalb.png" + ")";   
     let style = canv.style.backgroundImage;
-    goalX = 467;
-    goalY = 155;
-
-    console.log(canv.style.backgroundImage)
-
+    goalX = 670;
+    goalY = 125;
     socket.emit("question", { style, goalX, goalY });
   } else if (n == 2) { //Geo 2
-    canv.style.backgroundImage = "url(" + "Map.png" + ")";
+    canv.style.backgroundImage = "url(" + "MapJharkendar.png" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 342;
-    goalY = 571;
-
+    goalX = 392;
+    goalY = 20;
     socket.emit("question", { style, goalX, goalY });
   } else if (n == 3) { //Geo 3
-    canv.style.backgroundImage = "url(" + "Map.png" + ")";
+    canv.style.backgroundImage = "url(" + "khorinisSmall.jpg" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 134;
-    goalY = 246;
-
+    goalX = 480;
+    goalY = 197;
     socket.emit("question", { style, goalX, goalY });
   }  else if (n == 4){ //Geo 4
-    canv.style.backgroundImage = "url(" + "Map.png" + ")";
+    canv.style.backgroundImage = "url(" + "khorinisSmall.jpg" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 23;
-    goalY = 168;
-
+    goalX = 684;
+    goalY = 315;
     socket.emit("question", { style, goalX, goalY });
   } else if (n == 5){ //Geo 5
-    canv.style.backgroundImage = "url(" + "Map.png" + ")";
+    canv.style.backgroundImage = "url(" + "minentalSmall.jpg" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 248;
-    goalY = 437;
-
+    goalX = 403;
+    goalY = 68;
     socket.emit("question", { style, goalX, goalY });
   } 
 }

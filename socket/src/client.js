@@ -78,34 +78,34 @@ function initPlayer(){
 //bild + zielpunkte festlegen
 function chooseQuestion(n) {
   if (n == 1) { //Geo 1
-    canv.style.backgroundImage = "url(" + "khorinisSmall.jpg" + ")";   
+    canv.style.backgroundImage = "url(" + "khorinis_city.jpg" + ")";   
     let style = canv.style.backgroundImage;
-    goalX = 351;
-    goalY = 537;
+    goalX = 461;
+    goalY = 309;
     socket.emit("question", { style, goalX, goalY });
   } else if (n == 2) { //Geo 2
-    canv.style.backgroundImage = "url(" + "khorinisSmall.jpg" + ")";
+    canv.style.backgroundImage = "url(" + "minentalSmall.jpg" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 487;
-    goalY = 301;
+    goalX = 702;
+    goalY = 366;
     socket.emit("question", { style, goalX, goalY });
   } else if (n == 3) { //Geo 3
     canv.style.backgroundImage = "url(" + "khorinisSmall.jpg" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 109;
-    goalY = 169;
+    goalX = 539;
+    goalY = 338;
     socket.emit("question", { style, goalX, goalY });
   }  else if (n == 4){ //Geo 4
-    canv.style.backgroundImage = "url(" + "g1ohneorksgebiet.png" + ")";
+    canv.style.backgroundImage = "url(" + "khorinisSmall.jpg" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 362;
-    goalY = 465;
+    goalX = 284;
+    goalY = 408;
     socket.emit("question", { style, goalX, goalY });
   } else if (n == 5){ //Geo 5
     canv.style.backgroundImage = "url(" + "g1MinentalSmall.png" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 426;
-    goalY = 196;
+    goalX = 592;
+    goalY = 215;
     socket.emit("question", { style, goalX, goalY });
   } 
 }

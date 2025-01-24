@@ -78,10 +78,10 @@ function initPlayer(){
 //bild + zielpunkte festlegen
 function chooseQuestion(n) {
   if (n == 1) { //Geo 1
-    canv.style.backgroundImage = "url(" + "khorinis_city.jpg" + ")";   
+    canv.style.backgroundImage = "url(" + "g3Full.jpg" + ")";   
     let style = canv.style.backgroundImage;
-    goalX = 461;
-    goalY = 309;
+    goalX = 235;
+    goalY = 563;
     socket.emit("question", { style, goalX, goalY });
   } else if (n == 2) { //Geo 2
     canv.style.backgroundImage = "url(" + "minentalSmall.jpg" + ")";

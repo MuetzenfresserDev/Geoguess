@@ -76,6 +76,7 @@ function initPlayer(){
 }
 
 //bild + zielpunkte festlegen
+//CHANGE HIER -> n 1-5 Frage, x und y koordinaten können aus der Konsole entnommen werden
 function chooseQuestion(n) {
   if (n == 1) { //Geo 1
     canv.style.backgroundImage = "url(" + "khorinisSmall.jpg" + ")";   

@@ -249,7 +249,13 @@ socket.on("connect", () => {
   });
 
   socket.on("stayConnected", (data) => {
-    console.log(spieler.name + " stay connected");
+    if(spieler.hasOwnProperty("name")){
+      console.log(spieler.name + " stay connected");
+    }
+    else {
+      console.log('HOST' + " stay connected");
+    }
+    
     socket.emit("pong",1)
   })
   

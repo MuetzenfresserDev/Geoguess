@@ -249,7 +249,7 @@ socket.on("connect", () => {
   });
 
   socket.on("stayConnected", (data) => {
-    if(spieler.hasOwnProperty("name")){
+    if(spieler != undefined && spieler.hasOwnProperty("name")){
       console.log(spieler.name + " stay connected");
     }
     else {

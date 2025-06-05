@@ -249,7 +249,11 @@ socket.on("connect", () => {
   });
 
   socket.on("stayConnected", (data) => {
-    console.log(data + " stay connected");
+    if(data.length > 0){
+      data.forEach(element => {
+        console.log(element.name + " is connected")
+      });
+    }    
     socket.emit("pong",1)
   })
   

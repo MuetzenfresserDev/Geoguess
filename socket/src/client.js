@@ -78,6 +78,21 @@ function initPlayer(){
 //bild + zielpunkte festlegen
 //CHANGE HIER -> n 1-5 Frage, x und y koordinaten können aus der Konsole entnommen werden
 function chooseQuestion(n) {
+
+  let context = canv.getContext("2d");
+  context.clearRect(0, 0, 800, 592);
+
+  if(spieler){
+    spieler.x = 400;
+    spieler.y = 296
+
+    klickPositionDiv.style.left = spieler.x - 15 + "px"; // Die Hälfte der Breite des Elements abziehen
+    klickPositionDiv.style.top = spieler.y - 15 + "px"; // Die Hälfte der Höhe des Elements abziehen
+
+    klickPositionDiv.style.display = "block";
+  }
+
+
   if (n == 1) { //Geo 1
     canv.style.backgroundImage = "url(" + "khorinisSmall.jpg" + ")";   
     let style = canv.style.backgroundImage;

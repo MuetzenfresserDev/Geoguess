@@ -47,6 +47,13 @@ io.on('connection', socket => {
     })
     
     socket.on('disconnect', () =>{
+
+        const removedPlayers = playerlist.filter(item => item.id === socket.id);
+
+        removedPlayers.forEach(player => {
+            console.log(`Player ${player.name} disconnected`);
+        })
+
         playerlist = playerlist.filter(item => item.id !== socket.id)
     })
 

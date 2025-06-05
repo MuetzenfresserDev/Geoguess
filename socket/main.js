@@ -10,6 +10,9 @@ const port = process.env.PORT||8080;
 
 //server to socket
 const io = require("socket.io")(http, {
+    pingInterval: 25000,   // alle 25s ein Ping
+    pingTimeout: 600000,    // Verbindung wird erst nach 60s Inaktivität getrennt
+    maxHttpBufferSize: 1e8,
     cors: {
       origin: "*", // besser: genaue Domain hier angeben
       methods: ["GET", "POST"]
@@ -26,6 +29,10 @@ app.use(express.static('src'));
 app.get('/', (req,res) =>{
     res.sendFile(path.join(__dirname, 'src/index.html'))
 })
+
+app.get('/keepalive', (req, res) => {
+    res.sendStatus(200); // Nichts tun, aber als "aktiv" zählen
+});  
 
 //new connection
 io.on('connection', socket => {
@@ -46,6 +53,10 @@ io.on('connection', socket => {
         console.log('pong')
     })
     
+    socket.on("pong", () => {
+        socket.lastPong = Date.now();
+    });
+
     socket.on('disconnect', () =>{
 
         const removedPlayers = playerlist.filter(item => item.id === socket.id);

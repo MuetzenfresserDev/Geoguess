@@ -248,7 +248,7 @@ socket.on("connect", () => {
   });
 
   socket.on("stayConnected", (data) => {
-    console.log("stayConnected")
+    console.log(spieler.name + " stay connected");
     socket.emit("pong",1)
   })
   

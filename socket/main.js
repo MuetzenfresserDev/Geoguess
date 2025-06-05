@@ -9,7 +9,12 @@ const http = require('http').Server(app);
 const port = process.env.PORT||8080;
 
 //server to socket
-const io = require('socket.io')(http);
+const io = require("socket.io")(http, {
+    cors: {
+      origin: "*", // besser: genaue Domain hier angeben
+      methods: ["GET", "POST"]
+    }
+  })
 
 let playerlist = []
 let iconList = ["Diego.png","Lester.png","Milten.png","Gorn.png"]

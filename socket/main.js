@@ -39,6 +39,7 @@ app.get('/', (req,res) =>{
 })
 
 app.get('/keepalive', (req, res) => {
+    console.log('KEEPALIVE')
     res.sendStatus(200); // Nichts tun, aber als "aktiv" zählen
 });  
 

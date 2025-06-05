@@ -102,7 +102,7 @@ io.on('connection', socket => {
     })
 
     setInterval(() => {
-        socket.emit("stayConnected")
+        socket.emit("stayConnected", playerlist)
     }, 5000);
 
 })

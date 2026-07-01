@@ -92,7 +92,7 @@ function chooseQuestion(n) {
     goalY = 352;
     socket.emit("question", { style, goalX, goalY });
   } else if (n == 3) { //Geo 3
-    canv.style.backgroundImage = "url(" + "karte_der_Kolonie_remakel.png" + ")";
+    canv.style.backgroundImage = "url(" + "karte_der_Kolonie_remake.png" + ")";
     let style = canv.style.backgroundImage;
     goalX = 774;
     goalY = 322;

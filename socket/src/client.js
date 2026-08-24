@@ -82,32 +82,32 @@ function chooseQuestion(n) {
   if (n == 1) { //Geo 1
     canv.style.backgroundImage = "url(" + "karte_der_Kolonie_remake.png" + ")";   
     let style = canv.style.backgroundImage;
-    goalX = 385;
-    goalY = 476;
+    goalX = 299;
+    goalY = 424;
     socket.emit("question", { style, goalX, goalY });
   } else if (n == 2) { //Geo 2
     canv.style.backgroundImage = "url(" + "karte_der_Kolonie_remake.png" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 148;
-    goalY = 241;
+    goalX = 182;
+    goalY = 196;
     socket.emit("question", { style, goalX, goalY });
   } else if (n == 3) { //Geo 3
     canv.style.backgroundImage = "url(" + "karte_der_Kolonie_remake.png" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 480;
-    goalY = 516;
+    goalX = 427;
+    goalY = 144;
     socket.emit("question", { style, goalX, goalY });
   }  else if (n == 4){ //Geo 4
     canv.style.backgroundImage = "url(" + "karte_der_Kolonie_remake.png" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 742;
-    goalY = 500;
+    goalX = 223;
+    goalY = 214;
     socket.emit("question", { style, goalX, goalY });
   } else if (n == 5){ //Geo 5
     canv.style.backgroundImage = "url(" + "karte_der_Kolonie_remake.png" + ")";
     let style = canv.style.backgroundImage;
-    goalX = 457;
-    goalY = 363;
+    goalX = 308;
+    goalY = 276;
     socket.emit("question", { style, goalX, goalY });
   } 
 }

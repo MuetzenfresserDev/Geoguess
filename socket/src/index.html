@@ -1,397 +1,356 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gothic</title>
+    <title>Gothic Geoguessr</title>
+    <style>
+      :root {
+        --theme-colour: #2596be;
+        --theme-colour-hover: #2bacdb;
+        --theme-colour-darker: #135f0c;
+        --theme-colour-shadow: rgba(37, 117, 37, 0.2);
+        --surface: #1c1f22;
+        --surface-elevated: #262a2e;
+        --text: #e6e6e6;
+        --text-muted: #a3a9ad;
+        --radius: 10px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+        font-size: 1.1rem;
+        margin: 0;
+        padding: 0;
+        color: var(--text);
+        background-color: transparent;
+      }
+
+      button {
+        background-color: var(--theme-colour);
+        border-radius: 6px;
+        border: none;
+        box-shadow: 0 3px 6px var(--theme-colour-shadow);
+        color: white;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 0.95rem;
+        padding: 0.55em 1.6em;
+        transition: background-color 0.15s ease, transform 0.05s ease;
+      }
+
+      button:hover:not(:disabled) {
+        background-color: var(--theme-colour-hover);
+      }
+
+      button:active:not(:disabled) {
+        transform: translateY(1px);
+      }
+
+      button:disabled {
+        cursor: default;
+        opacity: 0.45;
+        box-shadow: none;
+      }
+
+      input {
+        font-family: inherit;
+      }
+
+      /* --------------------------------------------------------- */
+      /* Layout                                                      */
+      /* --------------------------------------------------------- */
+
+      #game-layout {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        align-items: flex-start;
+      }
+
+      #canvas {
+        margin: 0;
+        padding: 0;
+        display: none;
+        background-size: cover;
+        background-color: var(--surface);
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+      }
+
+      #host-box {
+        display: none;
+        text-align: center;
+        margin-top: 1.75rem;
+        background: var(--surface-elevated);
+        border-radius: var(--radius);
+        padding: 1rem;
+      }
+
+      #host-box .question-picker {
+        margin-top: 0.75rem;
+        display: flex;
+        justify-content: center;
+        gap: 0.4rem;
+      }
+
+      #host-box .question-picker button {
+        font-size: 0.85rem;
+        padding: 0.4em 0.9em;
+      }
+
+      #host-box .host-actions {
+        display: flex;
+        justify-content: center;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+      }
+
+      #hostAbstand {
+        display: none;
+        width: 280px;
+        min-height: 592px;
+        background: var(--surface-elevated);
+        border-radius: var(--radius);
+        padding: 1.25rem;
+      }
+
+      #hostAbstand .player-score {
+        margin-bottom: 1rem;
+        word-break: break-word;
+      }
+
+      #hostAbstand .player-score .player-name {
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      #hostAbstand .player-score .player-distance {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      #player-box {
+        width: 800px;
+        max-width: 100%;
+        text-align: center;
+        display: none;
+        margin-top: 1.5rem;
+      }
+
+      #nameInput {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      #nameInput input {
+        font-size: 1.05rem;
+        padding: 0.5em 0.8em;
+        border-radius: 6px;
+        border: 1px solid #444;
+        background: var(--surface-elevated);
+        color: var(--text);
+      }
+
+      #abstand {
+        margin-top: 0.75rem;
+        color: var(--text-muted);
+      }
+
+      /* --------------------------------------------------------- */
+      /* Marker / Icons                                              */
+      /* --------------------------------------------------------- */
+
+      .icon {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 30px;
+        height: 30px;
+        border: solid white;
+        border-width: 2px;
+        border-radius: 50%;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+        display: none;
+        pointer-events: none;
+      }
+
+      @keyframes goalPulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(255, 90, 90, 0.6);
+        }
+        70% {
+          box-shadow: 0 0 0 14px rgba(255, 90, 90, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(255, 90, 90, 0);
+        }
+      }
+
+      #goalPosition {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: none;
+        pointer-events: none;
+        animation: goalPulse 1.6s ease-out infinite;
+      }
+
+      /*
+       * "X markiert die Stelle": statt eines Bildes zeichnen wir das X
+       * direkt per CSS aus zwei gekreuzten Balken. #goalPosition selbst
+       * bleibt unsichtbar (nur der Rahmen für den Puls-Kreis), die
+       * beiden Pseudo-Elemente bilden das eigentliche X.
+       */
+      #goalPosition::before,
+      #goalPosition::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 34px;
+        height: 6px;
+        background-color: #d43b2f;
+        border: 1.5px solid #3a0e0a;
+        border-radius: 3px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+      }
+
+      #goalPosition::before {
+        transform: translate(-50%, -50%) rotate(45deg);
+      }
+
+      #goalPosition::after {
+        transform: translate(-50%, -50%) rotate(-45deg);
+      }
+
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 68px;
+        height: 20px;
+        box-sizing: border-box;
+        text-align: center;
+        color: #131313;
+        background-color: rgba(255, 255, 255, 0.88);
+        z-index: 9999;
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 20px;
+        white-space: nowrap;
+        overflow: visible;
+        display: none;
+        pointer-events: none;
+        border-radius: 6px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+      }
+
+      .overlay::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 6px solid rgba(255, 255, 255, 0.88);
+      }
+
+      /* --------------------------------------------------------- */
+      /* Start-/Rollenauswahl                                       */
+      /* --------------------------------------------------------- */
+
+      #playBtn {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 4rem;
+      }
+    </style>
   </head>
   <body>
-    <!-- NICHT G3 -> 592 height  G3 -> 826 height widht both 800--> 
-    <!-- -------------------------------------------------------------- -->
-    <div>
-      <div style="float: left">
-        <canvas
-          id="canvas"
-          width="850"
-          height="592"
-          style="margin: 0; padding: 0; display: none"
-        ></canvas>
-        <div id="host-box" style="margin-top: 2.5rem;">
-          <button id="anzeigen" disabled="true" onclick="revealPlayerLocations()">Spieler Anzeigen</button>
-          <button id="update" onclick="updatePlayerPositions(1)">UpdatePositions</button>
-          <button id="entfernung" disabled="true" onclick="showResults()">Zeige Entfernungen</button>
-          <div style="width: 33%; float: right">
-            <button onclick="chooseQuestion(1)" style="font-size: small">1</button>
-            <button onclick="chooseQuestion(2)" style="font-size: small">2</button>
-            <button onclick="chooseQuestion(3)" style="font-size: small">3</button>
-            <button onclick="chooseQuestion(4)" style="font-size: small">4</button>
-            <button onclick="chooseQuestion(5)" style="font-size: small">5</button>
+    <!-- NICHT G3 -> 592 height  G3 -> 826 height, Breite bleibt 800 -->
+
+    <div id="game-layout">
+      <div>
+        <canvas id="canvas" width="850" height="592"></canvas>
+
+        <div id="host-box">
+          <div class="host-actions">
+            <button id="anzeigen" disabled onclick="revealPlayerLocations()">Spieler anzeigen</button>
+            <button id="update" onclick="updatePlayerPositions(1)">Positionen aktualisieren</button>
+            <button id="entfernung" disabled onclick="showResults()">Entfernungen zeigen</button>
+          </div>
+          <div class="question-picker">
+            <button onclick="chooseQuestion(1)">1</button>
+            <button onclick="chooseQuestion(2)">2</button>
+            <button onclick="chooseQuestion(3)">3</button>
+            <button onclick="chooseQuestion(4)">4</button>
+            <button onclick="chooseQuestion(5)">5</button>
           </div>
         </div>
       </div>
 
-      <!-- PUNKTEANZAHL ANZEIGE RECHTS -->
-      <div id="hostAbstand" style="float: left; height: 592px; width:300px; position: relative; display: none;">
-        <div id="test" style="margin-left: 20px; word-break: break-all; font-size: large;">
-          <div>
-            <di id="name0"></di>
-            <div id="abstand0"></div>
-          </div>
-          <br>
-          <div>
-            <di id="name1"></di>
-            <div id="abstand1"></div>
-          </div>
-          <br>
-          <div>
-            <di id="name2"></di>
-            <div id="abstand2"></div>
-          </div>
-          <br>
-          <div>
-            <di id="name3"></di>
-            <div id="abstand3"></div>
-          </div>
-        </div>     
+      <!-- Punkteanzeige (Host-Ansicht) -->
+      <div id="hostAbstand">
+        <div class="player-score">
+          <div id="name0" class="player-name"></div>
+          <div id="abstand0" class="player-distance"></div>
+        </div>
+        <div class="player-score">
+          <div id="name1" class="player-name"></div>
+          <div id="abstand1" class="player-distance"></div>
+        </div>
+        <div class="player-score">
+          <div id="name2" class="player-name"></div>
+          <div id="abstand2" class="player-distance"></div>
+        </div>
+        <div class="player-score">
+          <div id="name3" class="player-name"></div>
+          <div id="abstand3" class="player-distance"></div>
+        </div>
       </div>
     </div>
 
-    <img id="klickPosition" class="icon" src="nameless.png" />
+    <img id="klickPosition" class="icon" src="nameless.png" alt="" />
 
-    <img id="klickPositionHost0" class="icon" src="Diego.png" />
+    <img id="klickPositionHost0" class="icon" src="Diego.png" alt="" />
     <div class="overlay" id="playerName0"></div>
-    <img id="klickPositionHost1" class="icon" src="Lester.png" />
+    <img id="klickPositionHost1" class="icon" src="Lester.png" alt="" />
     <div class="overlay" id="playerName1"></div>
-    <img id="klickPositionHost2" class="icon" src="Milten.png" />
+    <img id="klickPositionHost2" class="icon" src="Milten.png" alt="" />
     <div class="overlay" id="playerName2"></div>
-    <img id="klickPositionHost3" class="icon" src="Gorn.png" />
+    <img id="klickPositionHost3" class="icon" src="Gorn.png" alt="" />
     <div class="overlay" id="playerName3"></div>
 
-    <img id="goalPosition" src="target.png" />
+    <div id="goalPosition"></div>
+
     <div id="player-box">
-      <div disbaled="true" style="width: 33%; float: right">
-        
+      <div id="nameInput">
+        <input id="inp" placeholder="Dein Name" />
+        <button onclick="initPlayer()">Speichern</button>
       </div>
-      <div style="width: 60%;" id="nameInput">
-        <input id="inp" placeholder="Name, Speichern!" style="font-size: large; margin: 5px; padding: 0.5em;" />
-        <button onclick="initPlayer()" style="font-size: large;">Speichern</button>
-      </div>
-      <div style="width: 60%; margin-top: 13px;" id="abstand">
-      </div>
+      <div id="abstand"></div>
     </div>
 
-    <!-- -------------------------------------------------------------- -->
-
-    <!-- <h1>Get Response from Server</h1>
-    <button onclick="sendMessage()">Send Message to Server</button> -->
-    <div id="playBtn" style="margin-top: 300px; margin-left: 350px;">
+    <div id="playBtn">
       <button id="btn1" onclick="setupPlayerView()">SPIELER</button>
       <button id="btn2" onclick="setupHostView()" style="visibility: collapse;">HOST</button>
     </div>
-    
 
     <script src="socket.io/socket.io.js"></script>
     <script defer src="client.js"></script>
-
-    <script>
-      function setupPlayerView() {
-        document.getElementById("canvas").style.display = "block";
-        document.getElementById("player-box").style.display = "block";
-
-        document.getElementById("playBtn").style.display = "none";
-        initCanvas();
-      }
-
-      let playerlist;
-
-      function setupHostView() {
-        document.getElementById("canvas").style.display = "block";
-        document.getElementById("host-box").style.display = "block";
-        document.getElementById("hostAbstand").style.display = "block";
-
-        document.getElementById("playBtn").style.display = "none";
-
-        updatePlayerPositions();
-
-        initCanvas();
-      }
-
-      let interval;
-
-      function updatePlayerPositions(n = 0) {
-
-        if(n != 0){
-          anzeigen.disabled = false;
-        entfernung.disabled = false;
-        }
-
-        if (canv != undefined) {
-          let goalPositionDiv = document.getElementById("goalPosition");
-          goalPositionDiv.style.display = "none";
-          document.getElementById("hostAbstand").style.display = "none";
-          let context = canv.getContext("2d");
-          context.clearRect(0, 0, 800, 592);
-        }
-
-        klickPositionHost0.style.display = "none";
-        playerName0.style.display = "none";
-        klickPositionHost1.style.display = "none";
-        playerName1.style.display = "none";
-        klickPositionHost2.style.display = "none";
-        playerName2.style.display = "none";
-        klickPositionHost3.style.display = "none";
-        playerName3.style.display = "none";
-
-        interval = setInterval(() => {
-          socket.emit("playerList");
-        }, 1000);
-        socket.on("list", (data) => {
-          playerlist = data;
-        });
-      }
-
-      function initCanvas() {
-        canv = document.getElementById("canvas");
-        //canv.style.backgroundImage = "url(" + "g3Full.jpg" + ")";
-      }
-
-      function revealPlayerLocations() {
-        clearInterval(interval);
-
-        for (let i = 0; i < playerlist.length; i++) {
-          const player = playerlist[i];
-
-          abstandDiv = document.getElementById("abstand");
-
-          console.log(i);
-
-          if (i == 0) {
-            klickPositionHost0.style.left = player.x - 15 + "px"; // Die Hälfte der Breite des Elements abziehen
-            klickPositionHost0.style.top = player.y - 15 + "px"; // Die Hälfte der Höhe des Elements abziehen
-            playerName0.style.left = player.x - 32 + "px";
-            playerName0.style.top = player.y + 20 + "px";
-            klickPositionHost0.style.display = "block";
-            playerName0.style.display = "block";
-            nameRef = document.getElementById("playerName0");
-            nameRef.innerText = player.name;         
-          } else if (i == 1) {
-            klickPositionHost1.style.left = player.x - 15 + "px"; // Die Hälfte der Breite des Elements abziehen
-            klickPositionHost1.style.top = player.y - 15 + "px"; // Die Hälfte der Höhe des Elements abziehen
-            playerName1.style.left = player.x - 32 + "px";
-            playerName1.style.top = player.y + 20 + "px";
-            klickPositionHost1.style.display = "block";
-            playerName1.style.display = "block";
-            nameRef = document.getElementById("playerName1");
-            nameRef.innerText = player.name; 
-          } else if (i == 2) {
-            klickPositionHost2.style.left = player.x - 15 + "px"; // Die Hälfte der Breite des Elements abziehen
-            klickPositionHost2.style.top = player.y - 15 + "px"; // Die Hälfte der Höhe des Elements abziehen
-            playerName2.style.left = player.x - 32 + "px";
-            playerName2.style.top = player.y + 20 + "px";
-            klickPositionHost2.style.display = "block";
-            playerName2.style.display = "block";
-            nameRef = document.getElementById("playerName2");
-            nameRef.innerText = player.name; 
-          } else if (i == 3) {
-            klickPositionHost3.style.left = player.x - 15 + "px"; // Die Hälfte der Breite des Elements abziehen
-            klickPositionHost3.style.top = player.y - 15 + "px"; // Die Hälfte der Höhe des Elements abziehen
-            playerName3.style.left = player.x - 32 + "px";
-            playerName3.style.top = player.y + 20 + "px";
-            klickPositionHost3.style.display = "block";
-            playerName3.style.display = "block";
-            nameRef = document.getElementById("playerName3");
-            nameRef.innerText = player.name; 
-          }
-        }
-      }
-
-      function showResults() {
-        entfernung.disabled = true;
-        anzeigen.disabled = true;
-
-        console.log("test");
-
-        socket.on("list", (data) => {
-          playerlist = data;
-        })
-
-        socket.emit("playerList");
-        
-
-        socket.emit("getResultForClient");
-
-        document.getElementById("hostAbstand").style.display = "block";
-
-        let goalPositionDiv = document.getElementById("goalPosition");
-
-        goalPositionDiv.style.left = goalX - 15 + "px";
-        goalPositionDiv.style.top = goalY - 15 + "px";
-        goalPositionDiv.style.display = "block";
-
-        for (let i = 0; i < playerlist.length; i++) {
-          const element = playerlist[i];
-          
-          console.log(element.abstand)
-
-          drawLineHost(element.x, element.y, goalX, goalY, i, element.abstand, element.name)
-
-        }
-
-      }
-
-      function drawLineHost(x1, y1, x2, y2, index, elementAbstand, name) {
-        let canvas = document.getElementById("canvas");
-        let context = canvas.getContext("2d");
-
-        let abstandRef
-        let nameRef
-
-        if(index == 0){
-         abstandRef = document.getElementById("abstand0")
-         nameRef = document.getElementById("name0")
-        } else if(index == 1){
-          abstandRef = document.getElementById("abstand1")
-          nameRef = document.getElementById("name1")
-        } else if(index ==2){
-          abstandRef = document.getElementById("abstand2")
-          nameRef = document.getElementById("name2")
-        } else{
-          abstandRef = document.getElementById("abstand3")
-          nameRef = document.getElementById("name3")
-        }
-
-
-        context.lineWidth = 2;
-        context.strokeStyle = "white";
-
-        let dx = x2 - x1;
-        let dy = y2 - y1;
-        let steps = Math.max(Math.abs(dx), Math.abs(dy));
-
-        let xIncrement = dx / steps;
-        let yIncrement = dy / steps;
-        let currentX = x1;
-        let currentY = y1;
-
-        let count = 0;
-
-        context.clearRect(0, 0, 800, 592);
-
-        let animation = setInterval(function () {
-          context.beginPath();
-          context.moveTo(x1, y1);
-          context.lineTo(currentX, currentY);
-          context.stroke();
-
-          currentX += xIncrement;
-          currentY += yIncrement;
-          count++;
-
-          abstandRef.textContent = count + " Pixel Abstand";
-          nameRef.textContent = name + ":"
-
-          console.log(spieler);
-
-          if (count >= steps) {
-            clearInterval(animation);
-              abstandRef.textContent = elementAbstand + " Pixel Abstand";
-          }
-        }, 10);
-      }
-    </script>
+    <script defer src="host.js"></script>
   </body>
-  <style>
-    body {
-      font-family: Helvetica;
-      font-size: x-large;
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      color: rgb(216, 216, 216);
-      background-color: #daf1d800;
-
-      --theme-colour: rgb(37, 150, 190);
-      --theme-colour-darker: #135f0c;
-      --theme-colour-hover: rgb(43, 172, 219);
-      --theme-colour-shadow: #25752533;
-    }
-    #player-box {
-      width: 800px;
-      text-align: center;
-      display: none;
-    }
-    #host-box {
-      display: none;
-      text-align: center;
-    }
-    #abstand {
-      width: 33%;
-      float: right;
-    }
-    .pictureDiv {
-      width: 800px;
-      height: 592px;
-    }
-    .icon {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 30px;
-      height: 30px;
-      border: solid white;
-      border-width: 2px;
-      border-radius: 50%;
-      display: none;
-    }
-    #goalPosition {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      display: none;
-    }
-    #canvas {
-      background-size: cover;
-      border-radius: 10%;
-    }
-    #test{
-      margin: 0;
-  position: absolute;
-  top: 50%;
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
-    }
-    .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 68px;
-    height: 20px;
-    text-align: center;
-    color: rgb(19, 19, 19);
-    background-color: rgba(255, 255, 255, 0.7);
-    z-index: 9999; /* Wert für die Stapelreihenfolge */
-    font-size: 15px;
-    font-weight: bold;
-    display: none;
-}
-button{
-  background-color: var(--theme-colour);
-  border-radius: 5px;
-  border: none;
-  box-shadow: 0 5px 5px var(--theme-colour-shadow);
-  color: white;
-  cursor: pointer;
-  font-family: sans-serif;
-  font-size: small;
-  
-  padding: 0.5em 2em;
-}
-button:disabled {
-    cursor: default;
-    opacity: 0.5;
-}
-  </style>
 </html>

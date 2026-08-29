@@ -1,13 +1,24 @@
+/**
+ * client.js
+ *
+ * Gemeinsame Spieler-Logik für das Geoguessr-Mini-Spiel.
+ *
+ * WICHTIG: Die Socket.IO-Events (Namen und Datenform) wurden bewusst
+ * NICHT verändert - server.js und die Angular-Anwendung verlassen
+ * sich darauf. Geändert wurden nur Code-Struktur, Lesbarkeit und ein
+ * paar kleine, ungefährliche Bugfixes (siehe Kommentare unten).
+ */
+
 class Player {
   constructor(id, name, icon, role) {
-    this.x = 0;
-    this.y = 0;
     this.id = id;
     this.name = name;
-    this.show = false;
     this.icon = icon;
     this.role = role;
-    this.abstand = 0
+    this.x = 0;
+    this.y = 0;
+    this.show = false;
+    this.abstand = 0;
   }
 
   updatePosition(x, y) {
@@ -25,250 +36,250 @@ class Player {
 }
 
 // ---------------------------------------------------------------
+// Grundzustand
+// ---------------------------------------------------------------
+
 const socket = io();
 
-let img
+const CANVAS_WIDTH = 800;
+const CANVAS_HEIGHT = 592;
 
-var canv
-//zielpunkt
+// canv/spieler werden bewusst ohne "const" auf Modul-Ebene deklariert
+// (nicht "let" innerhalb einer Funktion), weil host.js im selben
+// globalen Scope darauf zugreift (beide Dateien sind klassische,
+// nicht-modulare <script>-Tags).
+let canv = null;
+let abstandDiv = null;
+let spieler = null;
+
+// Zielpunkt der aktuellen Frage (Default = Zustand nach "init").
 let goalX = 377;
 let goalY = 140;
 
-//punktzahl
-let abstand = 0;
-let abstandDiv
+/**
+ * Fragen-Katalog: Bild + Zielkoordinaten pro Fragen-Nummer.
+ * Neue Fragen einfach hier ergänzen statt eine if/else-Kette zu
+ * verlängern (Koordinaten wie bisher per Konsolen-Klick ermitteln).
+ */
+const QUESTIONS = {
+  1: { image: 'karte_der_Kolonie_remake.png', goalX: 299, goalY: 424 },
+  2: { image: 'karte_der_Kolonie_remake.png', goalX: 182, goalY: 196 },
+  3: { image: 'karte_der_Kolonie_remake.png', goalX: 427, goalY: 144 },
+  4: { image: 'karte_der_Kolonie_remake.png', goalX: 223, goalY: 214 },
+  5: { image: 'karte_der_Kolonie_remake.png', goalX: 308, goalY: 276 },
+};
 
-let spieler;
-
-//shift + y to start game
-document.addEventListener("keydown", function (event) {
-  if (event.shiftKey && event.keyCode === 89) {
-    console.log("test")
-    document.getElementById("btn2").style.visibility = "visible"
+// Shift + Y zeigt den versteckten "HOST"-Button (unverändertes Feature).
+document.addEventListener('keydown', (event) => {
+  if (event.shiftKey && event.key.toLowerCase() === 'y') {
+    document.getElementById('btn2').style.visibility = 'visible';
   }
 });
 
-function initPlayer(){
+// ---------------------------------------------------------------
+// Spieler-Setup
+// ---------------------------------------------------------------
 
-    nameInput.style.display = "none"
+function initPlayer() {
+  document.getElementById('nameInput').style.display = 'none';
 
-    img = document.getElementById("canvas");
-    img.addEventListener("click", clickHandler);
+  // Vorher gab es zwei Variablen (img/canv) für dasselbe Canvas-
+  // Element - hier reicht eine.
+  canv = document.getElementById('canvas');
+  canv.addEventListener('click', clickHandler);
 
-     canv = document.getElementById("canvas");
-    //canv.style.backgroundImage = "url(" + "khorinisSmall.jpg" + ")";
+  abstandDiv = document.getElementById('abstand');
+  abstandDiv.textContent = '0 Pixel Abstand';
 
-     abstandDiv = document.getElementById("abstand");
-    abstandDiv.textContent = 0 + " Pixel Abstand";
+  const name = document.getElementById('inp').value;
+  spieler = new Player(socket.id, name, 'testIcon', 'player');
 
-    let name = document.getElementById("inp").value
-    let icon = "testIcon"
-    let role = "player"
+  socket.emit('player', spieler);
 
-    spieler = new Player(socket.id, name, icon, role)
-
-    socket.emit("player", spieler)
-
-    socket.on("playerSetup", (data) =>{
-        spieler.icon = data
-        console.log(spieler)
-    })
+  socket.on('playerSetup', (data) => {
+    spieler.icon = data;
+  });
 }
 
-//bild + zielpunkte festlegen
-//CHANGE HIER -> n 1-5 Frage, x und y koordinaten können aus der Konsole entnommen werden
+// ---------------------------------------------------------------
+// Fragen auswählen (wird vom Host-Bedienfeld aus aufgerufen)
+// ---------------------------------------------------------------
+
+/**
+ * Wählt Frage n aus dem QUESTIONS-Katalog, setzt das Hintergrundbild
+ * und sendet die neue Frage (inkl. Zielkoordinaten) an alle Clients.
+ */
 function chooseQuestion(n) {
+  const question = QUESTIONS[n];
+  if (!question) {
+    console.warn(`Unbekannte Frage-Nummer: ${n}`);
+    return;
+  }
 
-  if (n == 1) { //Geo 1
-    canv.style.backgroundImage = "url(" + "karte_der_Kolonie_remake.png" + ")";   
-    let style = canv.style.backgroundImage;
-    goalX = 299;
-    goalY = 424;
-    socket.emit("question", { style, goalX, goalY });
-  } else if (n == 2) { //Geo 2
-    canv.style.backgroundImage = "url(" + "karte_der_Kolonie_remake.png" + ")";
-    let style = canv.style.backgroundImage;
-    goalX = 182;
-    goalY = 196;
-    socket.emit("question", { style, goalX, goalY });
-  } else if (n == 3) { //Geo 3
-    canv.style.backgroundImage = "url(" + "karte_der_Kolonie_remake.png" + ")";
-    let style = canv.style.backgroundImage;
-    goalX = 427;
-    goalY = 144;
-    socket.emit("question", { style, goalX, goalY });
-  }  else if (n == 4){ //Geo 4
-    canv.style.backgroundImage = "url(" + "karte_der_Kolonie_remake.png" + ")";
-    let style = canv.style.backgroundImage;
-    goalX = 223;
-    goalY = 214;
-    socket.emit("question", { style, goalX, goalY });
-  } else if (n == 5){ //Geo 5
-    canv.style.backgroundImage = "url(" + "karte_der_Kolonie_remake.png" + ")";
-    let style = canv.style.backgroundImage;
-    goalX = 308;
-    goalY = 276;
-    socket.emit("question", { style, goalX, goalY });
-  } 
+  canv.style.backgroundImage = `url(${question.image})`;
+  goalX = question.goalX;
+  goalY = question.goalY;
+
+  const style = canv.style.backgroundImage;
+  socket.emit('question', { style, goalX, goalY });
 }
+
+// ---------------------------------------------------------------
+// Klick-Handling (Spieler gibt seine Vermutung ab)
+// ---------------------------------------------------------------
 
 function clickHandler(event) {
-  let context = canv.getContext("2d");
-  context.clearRect(0, 0, 800, 592);
-  abstandDiv.textContent = 0 + " Pixel Abstand";
-  let klickPositionDiv = document.getElementById("klickPosition");
-  let goalPositionDiv = document.getElementById("goalPosition");
-  goalPositionDiv.style.display = "none";
+  const context = canv.getContext('2d');
+  context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  abstandDiv.textContent = '0 Pixel Abstand';
+
+  const klickPositionDiv = document.getElementById('klickPosition');
+  const goalPositionDiv = document.getElementById('goalPosition');
+  goalPositionDiv.style.display = 'none';
 
   spieler.x = event.clientX;
   spieler.y = event.clientY;
 
-  console.log("X: " + spieler.x + " Y: " + spieler.y);
+  klickPositionDiv.style.left = `${spieler.x - 15}px`;
+  klickPositionDiv.style.top = `${spieler.y - 15}px`;
+  klickPositionDiv.style.display = 'block';
 
-  klickPositionDiv.style.left = spieler.x - 15 + "px"; // Die Hälfte der Breite des Elements abziehen
-  klickPositionDiv.style.top = spieler.y - 15 + "px"; // Die Hälfte der Höhe des Elements abziehen
-
-  klickPositionDiv.style.display = "block";
-
-  spieler.abstand = Math.sqrt(Math.pow(goalX - spieler.x, 2) + Math.pow(goalY - spieler.y, 2)).toFixed(
-    0
+  spieler.abstand = Math.round(
+    Math.sqrt((goalX - spieler.x) ** 2 + (goalY - spieler.y) ** 2),
   );
 
-    spieler.updatePosition(spieler.x,spieler.y);
-  socket.emit("click", spieler );
+  spieler.updatePosition(spieler.x, spieler.y);
+  socket.emit('click', spieler);
 }
 
+// ---------------------------------------------------------------
+// Ergebnis-Anzeige
+// ---------------------------------------------------------------
+
 function getResult() {
-  let goalPositionDiv = document.getElementById("goalPosition");
+  const goalPositionDiv = document.getElementById('goalPosition');
+  goalPositionDiv.style.left = `${goalX - 15}px`;
+  goalPositionDiv.style.top = `${goalY - 15}px`;
+  goalPositionDiv.style.display = 'block';
 
-  goalPositionDiv.style.left = goalX - 15 + "px";
-  goalPositionDiv.style.top = goalY - 15 + "px";
-  goalPositionDiv.style.display = "block";
-
-  if(spieler != undefined){
+  if (spieler) {
     drawLine(spieler.x, spieler.y, goalX, goalY);
   }
 }
 
+/**
+ * Zeichnet animiert eine Linie von (x1,y1) nach (x2,y2) und zeigt am
+ * Ende den finalen Pixel-Abstand in abstandDiv an.
+ */
 function drawLine(x1, y1, x2, y2) {
-  let canvas = document.getElementById("canvas");
-  let context = canvas.getContext("2d");
+  const context = canv.getContext('2d');
+  context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-  context.lineWidth = 2;
-  context.strokeStyle = "white";
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const steps = Math.max(Math.abs(dx), Math.abs(dy));
+  const xIncrement = dx / steps;
+  const yIncrement = dy / steps;
 
-  let dx = x2 - x1;
-  let dy = y2 - y1;
-  let steps = Math.max(Math.abs(dx), Math.abs(dy));
-
-  let xIncrement = dx / steps;
-  let yIncrement = dy / steps;
   let currentX = x1;
   let currentY = y1;
-
   let count = 0;
 
-  context.clearRect(0, 0, 800, 592);
-
-
-  let animation = setInterval(function () {
-    context.beginPath();
-    context.moveTo(x1, y1);
-    context.lineTo(currentX, currentY);
-    context.stroke();
+  const animation = setInterval(() => {
+    strokeMapLine(context, x1, y1, currentX, currentY);
 
     currentX += xIncrement;
     currentY += yIncrement;
-    count++;
+    count += 1;
 
-
-    abstandDiv.textContent = count + " Pixel Abstand";
-
-    console.log(spieler)
+    abstandDiv.textContent = `${count} Pixel Abstand`;
 
     if (count >= steps) {
       clearInterval(animation);
-
-      if(spieler != undefined){
-        abstandDiv.textContent = spieler.abstand + " Pixel Abstand";
+      if (spieler) {
+        abstandDiv.textContent = `${spieler.abstand} Pixel Abstand`;
       }
-
     }
   }, 10);
 }
 
+/**
+ * Zeichnet eine Linie mit dunklem "Outline"-Effekt darunter, damit sie
+ * sich sowohl auf hellen als auch dunklen Kartenbereichen gut abhebt.
+ */
+function strokeMapLine(context, x1, y1, x2, y2) {
+  context.lineCap = 'round';
+
+  // Dunkler, breiterer Rand als Kontrast-Outline.
+  context.lineWidth = 5;
+  context.strokeStyle = 'rgba(20, 16, 10, 0.55)';
+  context.beginPath();
+  context.moveTo(x1, y1);
+  context.lineTo(x2, y2);
+  context.stroke();
+
+  // Helle Hauptlinie darüber.
+  context.lineWidth = 2.5;
+  context.strokeStyle = '#fff3d6';
+  context.beginPath();
+  context.moveTo(x1, y1);
+  context.lineTo(x2, y2);
+  context.stroke();
+}
+
+// ---------------------------------------------------------------
+// Socket-Events (Server -> Client)
+// WICHTIG: Namen/Datenform unverändert.
 // ---------------------------------------------------------------
 
-socket.on("connect", () => {
-    console.log(socket.id);
-  });
-  
-  socket.on("init", () => {
-    goalX = 377;
-    goalY = 140;
-  });
+socket.on('connect', () => {
+  console.log('Verbunden als', socket.id);
+});
 
-  socket.on("resultForClient", () => {
+socket.on('init', () => {
+  goalX = 377;
+  goalY = 140;
+});
 
-    console.log("clientStart")
+socket.on('resultForClient', () => {
+  getResult();
+});
+
+// Position eines (anderen) Spielers live aktualisieren.
+socket.on('recClick', (data) => {
+  const context = canv.getContext('2d');
+  context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+  const goalPositionDiv = document.getElementById('goalPosition');
+  goalPositionDiv.style.display = 'none';
+
+  // Bugfix: "x"/"y" wurden vorher ohne let/const gelesen und dadurch
+  // versehentlich zu impliziten globalen Variablen. Jetzt wird direkt
+  // aus "data" gelesen, ohne Zwischenvariablen.
+  const klickPositionDiv = document.getElementById('klickPosition');
+  klickPositionDiv.style.left = `${data.x - 15}px`;
+  klickPositionDiv.style.top = `${data.y - 15}px`;
+  klickPositionDiv.style.display = 'block';
+});
+
+socket.on('result', () => {
+  getResult();
+});
+
+socket.on('recQuestion', (data) => {
+  canv.style.backgroundImage = data.style;
+  goalX = data.goalX;
+  goalY = data.goalY;
+});
+
+socket.on('stayConnected', (data) => {
+  const names = data.map((player) => player.name).join(', ');
+  console.log(`${names} are connected`);
+  socket.emit('pong', 1);
+});
+
+window.addEventListener('message', (event) => {
+  if (event.data === 'message') {
     getResult();
-  })
-  
-  //Update Player Position
-  socket.on("recClick", (data) => {
-    x = data.x;
-    y = data.y;
-  
-    let context = canv.getContext("2d");
-    context.clearRect(0, 0, 800, 592);
-    //abstandDiv.textContent = 0 + " Pixel Abstand";
-  
-    let goalPositionDiv = document.getElementById("goalPosition");
-    goalPositionDiv.style.display = "none";
-  
-    let klickPositionDiv = document.getElementById("klickPosition");
-  
-    klickPositionDiv.style.left = x - 15 + "px"; // Die Hälfte der Breite des Elements abziehen
-    klickPositionDiv.style.top = y - 15 + "px"; // Die Hälfte der Höhe des Elements abziehen
-  
-    klickPositionDiv.style.display = "block";
-  });
-  
-  //Start get Result and Update all
-  socket.on("result", (data) => {
-    getResult();
-  });
-  
-  socket.on("recQuestion", (data) => {
-
-    console.log("recQuestion")
-
-    canv.style.backgroundImage = data.style;
-  
-    goalX = data.goalX;
-    goalY = data.goalY;
-  });
-
-  socket.on("stayConnected", (data) => {
-
-    let s = ''
-
-    if(data.length > 0){
-      data.forEach(element => {
-        s += element.name + ", "
-      });
-    }    
-
-    console.log(s + "are connected");
-
-    socket.emit("pong",1)
-  })
-  
-  window.addEventListener("message", function (event) {
-    console.log("EVENT");
-  
-    if (event.data === "message") {
-      getResult();
-    }
-  });
-  
+  }
+});
